@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Tiny House</title>
+</head>
+<body>
+    <script type="module">
+        import * as THREE from './path/to/three.module.js';
+        import { OrbitControls } from './path/to/OrbitControls.js';
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+
+        // Walls
+        const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x8B4513 });
+        const leftWallGeometry = new THREE.PlaneGeometry(32, 8);
+        const leftWall = new THREE.Mesh(leftWallGeometry, wallMaterial);
+        leftWall.position.set(-16, 0, 0);
+        leftWall.rotation.y = Math.PI / 2;
+        scene.add(leftWall);
+
+        // Right wall
+        const rightWall = leftWall.clone();
+        rightWall.position.set(16, 0, 0);
+        scene.add(rightWall);
+
+        // Back wall
+        const backWallGeometry = new THREE.PlaneGeometry(32, 8);
+        const backWall = new THREE.Mesh(backWallGeometry, wallMaterial);
+        backWall.position.set(0, 0, -10);
+        scene.add(backWall);
+
+        // Front wall
+        const frontWall = backWall.clone();
+        frontWall.position.set(0, 0, 10);
+        frontWall.rotation.y = Math.PI;
+        scene.add(frontWall);
+
+        // Add rooms (simplified as colored boxes)
+        function addRoom(width, height, depth, color, x, y, z) {
+            const geometry = new THREE.BoxGeometry(width, height, depth);
+            const material = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: 0.5 });
+            const room = new THREE.Mesh(geometry, material);
+            room.position.set(x, y, z);
+            scene.add(room);
+        }
+
+        // Bathroom
+        addRoom(10, 7, 8.33, 0x87CEEB, -11, -0.5, -5.835);
+
+        // Office
+        addRoom(20, 7, 11.67, 0x98FB98, -6, -0.5, 4.165);
+
+        // Kitchen
+        addRoom(20, 7, 11.67, 0xFFA07A, 6, -0.5, -4.165);
+
+        // Position the camera
+        camera.position.z = 50;
+        camera.position.y = 20;
+        camera.lookAt(0, 0, 0);
+
+        // Render loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
